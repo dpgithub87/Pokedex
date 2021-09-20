@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Pokedex.Services
 {
     /// <summary>
-    /// Fetches Pokemon details from PokeAPI via PokeAPINet Nuget package
-    /// PokeAPINet NugetPackage has cache enabled by default
+    /// Wrapper class that fetches Pokemon details from PokeAPI via PokeAPINet Nuget package
+    /// Client Cache enabled by default
     /// </summary>
     public class PokeApiNetService
     {
@@ -16,14 +16,23 @@ namespace Pokedex.Services
 
         public PokeApiNetService()
         {
-            _pokeApiClient = new PokeApiClient();
+
+        }
+        public PokeApiNetService(PokeApiClient pokeApiClient)
+        {
+            _pokeApiClient = pokeApiClient;
         }
 
         public virtual async Task<List<NamedApiResource<Pokemon>>> GetPokemonList()
         {
-            var responsePokemonLst = await _pokeApiClient.GetNamedResourcePageAsync<Pokemon>(-1, 0);
+            var responsePokemonLst = await _pokeApiClient.GetNamedResourcePageAsync<Pokemon>();
 
             return responsePokemonLst.Results;
+        }       
+
+        public virtual async Task<PokemonSpecies> GetPokemonSpecies(string pokemonName)
+        {
+            return await _pokeApiClient.GetResourceAsync<PokemonSpecies>(pokemonName);
         }
 
     }

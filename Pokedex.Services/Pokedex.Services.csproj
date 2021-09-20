@@ -8,4 +8,8 @@
     <PackageReference Include="PokeApiNet" Version="3.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pokedex.Models\Pokedex.Models.csproj" />
+  </ItemGroup>
+
 </Project>

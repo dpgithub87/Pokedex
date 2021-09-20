@@ -1,3 +1,4 @@
+using PokeApiNet;
 using System;
 using Xunit;
 
@@ -7,12 +8,14 @@ namespace Pokedex.Services.IntegrationTests
     {
 
         private PokeApiNetService _pokeApiNetService;
+        private PokeApiClient _pokeApiClient;
 
         [Fact]
         public void GetPokemonList_Should_Return_PokemonList()
         {
             // Arrange
-            _pokeApiNetService = new PokeApiNetService();
+            _pokeApiClient = new PokeApiClient();
+            _pokeApiNetService = new PokeApiNetService(_pokeApiClient);
 
             // Act
             var result = _pokeApiNetService.GetPokemonList().Result;

@@ -6,6 +6,7 @@ using Pokedex.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 
@@ -32,19 +33,24 @@ namespace Podex.Api.UnitTests
             _mockPokemonService = new Mock<PokemonService>();
 
             _mockPokemonService.Setup(ps => ps.GetPokemonNames())
-                               .Returns(new List<string>() { "testPokemon1" });
+                               .Returns(Task.FromResult(
+                                   new List<string>()
+                                   {
+                                       "testPokemon1"
+                                   }.AsEnumerable()
+                                   ));
 
             _pokemonController = new PokemonController(_mockLogger.Object
                 , _mockCache.Object
                 , _mockPokemonService.Object);
 
             // Act
-            var result = _pokemonController.Get();
+            var response = _pokemonController.Get();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.Equal("testPokemon1", result.FirstOrDefault());
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Result);
+            Assert.Equal("testPokemon1", response.Result.FirstOrDefault());
 
         }
     }

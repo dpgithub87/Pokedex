@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using PokeApiNet;
 using Pokedex.Services;
 using System;
 
@@ -38,6 +39,8 @@ namespace Pokedex
             services.AddSingleton<PokeApiNetService,PokeApiNetService>();
 
             services.AddSingleton<PokemonService, PokemonService>();
+
+            services.AddSingleton<PokeApiClient, PokeApiClient>();
 
             string redisConnStr = Configuration.GetValue<string>("Redis:ConnectionString");
 
