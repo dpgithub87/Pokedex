@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using PokeApiNet;
 using Pokedex.Services;
 using System;
+using System.Net.Http.Headers;
 
 namespace Pokedex
 {
@@ -43,6 +44,14 @@ namespace Pokedex
             services.AddSingleton<PokeApiClient, PokeApiClient>();
 
             string redisConnStr = Configuration.GetValue<string>("Redis:ConnectionString");
+
+            services.AddHttpClient<FunTranslationsService>(c =>
+            {
+                c.BaseAddress = new Uri("https://api.funtranslations.com/translate/");
+                c.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+            
 
             if (!string.IsNullOrEmpty(redisConnStr)) // Can use Azure Redis cache instance in production / test environments
             {

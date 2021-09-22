@@ -13,7 +13,9 @@ namespace Pokedex.Services.UnitTests
     {
         private Mock<PokeApiNetService> _mockPokeApiNetService;
 
-        private Mock<ILogger<PokemonService>> _mockLoggerPokemonService;
+        private Mock<FunTranslationsService> _mockFunTranslationService;
+
+        private Mock<ILogger<PokemonService>> _mockLoggerPokemonService;       
 
         private PokemonService pokemonService;
 
@@ -23,6 +25,7 @@ namespace Pokedex.Services.UnitTests
             //Arrange
             _mockPokeApiNetService = new Mock<PokeApiNetService>();
             _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
 
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonList())
                                   .Returns(Task.FromResult
@@ -34,7 +37,7 @@ namespace Pokedex.Services.UnitTests
                                       }
                                   }
                                   ));
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             //Act
             var resultPokemonNames = pokemonService.GetPokemonNames();
@@ -58,13 +61,13 @@ namespace Pokedex.Services.UnitTests
             //Arrange
             _mockPokeApiNetService = new Mock<PokeApiNetService>();
             _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
 
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonList())
                                   .Returns(Task.FromResult
                                   (new List<NamedApiResource<Pokemon>>()
                                   ));
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             //Act
             var resultPokemonNames = pokemonService.GetPokemonNames();
@@ -85,6 +88,8 @@ namespace Pokedex.Services.UnitTests
             _mockPokeApiNetService = new Mock<PokeApiNetService>();
 
             _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
+
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
 
             var habitat = new NamedApiResource<PokemonHabitat>() { Name = "testHabitat" };
 
@@ -108,7 +113,7 @@ namespace Pokedex.Services.UnitTests
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonSpecies(It.IsAny<string>()))
                                                    .Returns(Task.FromResult(pokemonSpecies));
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDetails(pokemonName).Result;
@@ -130,8 +135,10 @@ namespace Pokedex.Services.UnitTests
             // Arrange
             _mockPokeApiNetService = new Mock<PokeApiNetService>();
 
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();           
-                      
+            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
+
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
+
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
                 new PokemonSpeciesFlavorTexts()
@@ -152,7 +159,7 @@ namespace Pokedex.Services.UnitTests
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonSpecies(It.IsAny<string>()))
                                                    .Returns(Task.FromResult(pokemonSpecies));
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDetails(pokemonName).Result;
@@ -173,6 +180,8 @@ namespace Pokedex.Services.UnitTests
 
             _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
 
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
+
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
                 new PokemonSpeciesFlavorTexts()
@@ -192,7 +201,7 @@ namespace Pokedex.Services.UnitTests
 
             var pokemonModel = new Models.PokemonModel();
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDescription(pokemonSpecies, pokemonModel);
@@ -213,6 +222,8 @@ namespace Pokedex.Services.UnitTests
 
             _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
 
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
+
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
                 new PokemonSpeciesFlavorTexts()
@@ -232,7 +243,7 @@ namespace Pokedex.Services.UnitTests
 
             var pokemonModel = new Models.PokemonModel();
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDescription(pokemonSpecies, pokemonModel);

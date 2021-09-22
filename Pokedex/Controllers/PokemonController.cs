@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Pokedex.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("pokemon")]
     public class PokemonController : ControllerBase
     {
 
@@ -59,7 +59,7 @@ namespace Pokedex.Controllers
         /// <returns>Pokemon details</returns>
         [HttpGet]
         [Route("{pokemonName}")]
-        public async Task<ActionResult<PokemonModel>> Get(string pokemonName)
+        public async Task<ActionResult<PokemonModel>> GetPokemon(string pokemonName)
         {
             try
             {
@@ -68,6 +68,28 @@ namespace Pokedex.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("Excpetion occurred when fetching Pokemon details, Error Message: ", ex.Message, ex.InnerException);
+
+                return NotFound();
+            }
+        }
+
+        /// <summary>
+        /// Gets the Pokemon Details for a given pokemon name with Translations
+        /// </summary>
+        /// <param name="pokemonName"></param>
+        /// <returns>Pokemon details with Yoda/Shakespeare Translations</returns>
+        //[HttpGet("{pokemonTranslation:string}")]
+        [HttpGet]
+        [Route("translate/{pokemonName}")]
+        public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslation(string pokemonName)
+        {
+            try
+            {
+                return await _pokemonService.GetPokemonWithTranslations(pokemonName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Excpetion occurred when fetching GetPokemonWithTranslations, Error Message: ", ex.Message, ex.InnerException);
 
                 return NotFound();
             }

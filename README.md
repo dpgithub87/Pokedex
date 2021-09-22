@@ -30,6 +30,7 @@ To use Microservices architecture, Each of the integration touch point can be mo
 - Console application to integrate with PokeApi.Co
 - Console application to integrate with Shakespeare / Yoda FunTranslations API
 - Web API that could expose two required endpoints
+- Any additional microservices based on the complexity of the functionality (not required in this challenge)
 
 ### Integration 
 - Message Queuing system such as Azure Service Bus used for communication between microservices
