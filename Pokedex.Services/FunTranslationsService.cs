@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Pokedex.Models;
+using Pokedex.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,7 +13,7 @@ using System.Web;
 
 namespace Pokedex.Services
 {
-    public class FunTranslationsService
+    public class FunTranslationsService : IFunTranslationsService
     {
         private HttpClient _httpClient { get; }
         private ILogger<FunTranslationsService> _loggerFunTranslationsService;
@@ -27,7 +28,7 @@ namespace Pokedex.Services
             _loggerFunTranslationsService = loggerFunTranslationsService;
         }
 
-        public async Task<FunTranslation> TranslateWithShakespeare(string toTranslate)
+        public virtual async Task<FunTranslation> TranslateWithShakespeare(string toTranslate)
         {
             try
             {
@@ -45,7 +46,7 @@ namespace Pokedex.Services
             }
         }
 
-        public async Task<FunTranslation> TranslateWithYoda(string toTranslate)
+        public virtual async Task<FunTranslation> TranslateWithYoda(string toTranslate)
         {
             try
             {

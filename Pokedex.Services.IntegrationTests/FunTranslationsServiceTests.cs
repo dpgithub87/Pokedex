@@ -15,7 +15,7 @@ namespace Pokedex.Services.IntegrationTests
     public class FunTranslationsServiceTests
     {
 
-        private FunTranslationsService _FunTranslationsService;
+        private FunTranslationsService _funTranslationsService;
         private HttpClient _httpClient;
         private Mock<ILogger<FunTranslationsService>> _mockIloggerFunTranslationService;
 
@@ -36,10 +36,10 @@ namespace Pokedex.Services.IntegrationTests
 
             string expectedTextResult = "Thee did giveth mr. Tim a hearty meal,  but unfortunately what he did doth englut did maketh him kicketh the bucket.";
 
-            _FunTranslationsService = new FunTranslationsService(_httpClient, _mockIloggerFunTranslationService.Object);
+            _funTranslationsService = new FunTranslationsService(_httpClient, _mockIloggerFunTranslationService.Object);
 
             // Act
-            var result = _FunTranslationsService.TranslateWithShakespeare(sampleTextToConvert)?.Result;
+            var result = _funTranslationsService.TranslateWithShakespeare(sampleTextToConvert)?.Result;
 
             // Assert
             Assert.NotNull(result);
@@ -65,10 +65,10 @@ namespace Pokedex.Services.IntegrationTests
 
             string expectedTextResult = "Lost a planet,  master obiwan has.";
 
-            _FunTranslationsService = new FunTranslationsService(_httpClient, _mockIloggerFunTranslationService.Object);
+            _funTranslationsService = new FunTranslationsService(_httpClient, _mockIloggerFunTranslationService.Object);
 
             // Act
-            var result = _FunTranslationsService.TranslateWithYoda(sampleTextToConvert)?.Result;
+            var result = _funTranslationsService.TranslateWithYoda(sampleTextToConvert)?.Result;
 
             // Assert
             Assert.NotNull(result);

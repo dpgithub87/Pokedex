@@ -116,8 +116,10 @@ namespace Pokedex.Services
                     var translatedResponse = await _funTranslationService.TranslateWithYoda(pokemonModel.Description);
                     if (translatedResponse is null)
                     {
-                        return pokemonModel;
+                        return pokemonModel; // Standard description
                     }
+
+                    //Translated description
                     pokemonModel.Description = translatedResponse.contents.translated;
                     pokemonModel.Comments = "Yoda translated description";
                 }
@@ -126,8 +128,10 @@ namespace Pokedex.Services
                     var translatedResponse = await _funTranslationService.TranslateWithShakespeare(pokemonModel.Description);
                     if (translatedResponse is null)
                     {
-                        return pokemonModel;
+                        return pokemonModel; // Standard description
                     }
+
+                    //Translated description
                     pokemonModel.Description = translatedResponse.contents.translated;
                     pokemonModel.Comments = "Shakespeare translated description";
                 }
