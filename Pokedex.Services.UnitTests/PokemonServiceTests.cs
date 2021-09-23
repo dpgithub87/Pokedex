@@ -1,6 +1,10 @@
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PokeApiNet;
+using Pokedex.Models;
+using Pokedex.Services.Interface;
+using Pokedex.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +15,30 @@ namespace Pokedex.Services.UnitTests
 {
     public class PokemonServiceTests
     {
-        private Mock<PokeApiNetService> _mockPokeApiNetService;
+        private Mock<IPokeApiNetService> _mockPokeApiNetService;
 
         private Mock<FunTranslationsService> _mockFunTranslationService;
 
-        private Mock<ILogger<PokemonService>> _mockLoggerPokemonService;       
+        private Mock<ILogger<PokemonService>> _mockLoggerPokemonService;
+
+        private Mock<IDistributedCache> _mockCache;
 
         private PokemonService pokemonService;
 
+        public PokemonServiceTests()
+        {
+            _mockPokeApiNetService = new Mock<IPokeApiNetService>();
+            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
+            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            _mockCache = new Mock<IDistributedCache>();
+        }
+
+        #region "GetPokemonList"
         [Fact]
         public void GetPokemonList_Should_Return_ListOfNames()
         {
             //Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            SetupMockEmptyCache();
 
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonList())
                                   .Returns(Task.FromResult
@@ -37,7 +50,7 @@ namespace Pokedex.Services.UnitTests
                                       }
                                   }
                                   ));
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             //Act
             var resultPokemonNames = pokemonService.GetPokemonNames();
@@ -58,16 +71,13 @@ namespace Pokedex.Services.UnitTests
         [Fact]
         public void GetPokemonList_Should_Return_ZeroPokemon()
         {
-            //Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            //Arrange            
 
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonList())
                                   .Returns(Task.FromResult
                                   (new List<NamedApiResource<Pokemon>>()
                                   ));
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             //Act
             var resultPokemonNames = pokemonService.GetPokemonNames();
@@ -80,16 +90,35 @@ namespace Pokedex.Services.UnitTests
 
         }
 
+        #endregion
+
+        #region "GetPokemonDetails - EndPoint 1"
+
+        [Theory]
+        [InlineData("testPokemon")]
+        public void GetPokemonDetails_Should_Return_Pokemon_WithCache(string pokemonName)
+        {
+            // Arrange          
+            SetupPokemonDataCache();
+
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
+
+            // Act
+            var pokemon = pokemonService.GetPokemonDetails(pokemonName).Result;
+
+            // Assert
+            Assert.NotNull(pokemon);
+            Assert.Equal("testPokemon", pokemon.Name);
+            Assert.Equal("testHabitat", pokemon.Habitat);
+            Assert.Equal("testDescription", pokemon.Description);
+        }
+
         [Theory]
         [InlineData("pikachu")]
-        public void GetPokemonDetails_Should_Return_Pokemon(string pokemonName)
+        public void GetPokemonDetails_Should_Return_Pokemon_WithoutCache(string pokemonName)
         {
-            // Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
-
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            // Arrange           
+            SetupMockEmptyCache();
 
             var habitat = new NamedApiResource<PokemonHabitat>() { Name = "testHabitat" };
 
@@ -97,9 +126,9 @@ namespace Pokedex.Services.UnitTests
             {
                 new PokemonSpeciesFlavorTexts()
                 {
-                    FlavorText = "testFlavorText",
+                    FlavorText = "testDescription",
                     Language = new NamedApiResource<Language>(){ Name = "en" }
-                } 
+                }
             };
 
             var pokemonSpecies = new PokemonSpecies()
@@ -113,18 +142,17 @@ namespace Pokedex.Services.UnitTests
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonSpecies(It.IsAny<string>()))
                                                    .Returns(Task.FromResult(pokemonSpecies));
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDetails(pokemonName).Result;
-
 
             // Assert
 
             Assert.NotNull(pokemon);
             Assert.Equal("pikachu", pokemon.Name);
             Assert.Equal("testHabitat", pokemon.Habitat);
-            Assert.Equal("testFlavorText", pokemon.Description);
+            Assert.Equal("testDescription", pokemon.Description);
 
         }
 
@@ -132,18 +160,14 @@ namespace Pokedex.Services.UnitTests
         [InlineData("pikachu")]
         public void GetPokemonDetails_Should_Return_Null_Habitat(string pokemonName)
         {
-            // Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
-
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            // Arrange           
+            SetupMockEmptyCache();
 
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
                 new PokemonSpeciesFlavorTexts()
                 {
-                    FlavorText = "testFlavorText",
+                    FlavorText = "testDescription",
                     Language = new NamedApiResource<Language>(){ Name = "en" }
                 }
             };
@@ -159,7 +183,7 @@ namespace Pokedex.Services.UnitTests
             _mockPokeApiNetService.Setup(pac => pac.GetPokemonSpecies(It.IsAny<string>()))
                                                    .Returns(Task.FromResult(pokemonSpecies));
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDetails(pokemonName).Result;
@@ -169,24 +193,21 @@ namespace Pokedex.Services.UnitTests
 
             Assert.NotNull(pokemon);
             Assert.Equal("pikachu", pokemon.Name);
-            Assert.Null(pokemon.Habitat);            
+            Assert.Null(pokemon.Habitat);
         }
 
         [Fact]
         public void GetPokemonDescription_Should_Return_Null()
         {
             // Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
 
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            SetupMockEmptyCache();
 
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
                 new PokemonSpeciesFlavorTexts()
                 {
-                    FlavorText = "testFlavorText",
+                    FlavorText = "testDescriptionFrench",
                     Language = new NamedApiResource<Language>(){ Name = "fr" }
                 }
             };
@@ -201,7 +222,7 @@ namespace Pokedex.Services.UnitTests
 
             var pokemonModel = new Models.PokemonModel();
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDescription(pokemonSpecies, pokemonModel);
@@ -209,7 +230,7 @@ namespace Pokedex.Services.UnitTests
 
             // Assert
 
-            Assert.NotNull(pokemon);           
+            Assert.NotNull(pokemon);
             Assert.Null(pokemon.Description);
             Assert.Null(pokemon.RawDescription);
         }
@@ -218,11 +239,8 @@ namespace Pokedex.Services.UnitTests
         public void GetPokemonDescription_Should_Return_Clean_Description()
         {
             // Arrange
-            _mockPokeApiNetService = new Mock<PokeApiNetService>();
 
-            _mockLoggerPokemonService = new Mock<ILogger<PokemonService>>();
-
-            _mockFunTranslationService = new Mock<FunTranslationsService>();
+            SetupMockEmptyCache();
 
             var flavorTextEntries = new List<PokemonSpeciesFlavorTexts>()
             {
@@ -243,7 +261,7 @@ namespace Pokedex.Services.UnitTests
 
             var pokemonModel = new Models.PokemonModel();
 
-            pokemonService = new PokemonService(_mockPokeApiNetService.Object,_mockFunTranslationService.Object, _mockLoggerPokemonService.Object);
+            pokemonService = new PokemonService(_mockPokeApiNetService.Object, _mockFunTranslationService.Object, _mockLoggerPokemonService.Object, _mockCache.Object);
 
             // Act
             var pokemon = pokemonService.GetPokemonDescription(pokemonSpecies, pokemonModel);
@@ -257,6 +275,34 @@ namespace Pokedex.Services.UnitTests
 
             Assert.DoesNotContain("\t\n\r\f", pokemon.Description);
             Assert.Contains("\t\n\r\f", pokemon.RawDescription);
+        }
+
+        #endregion
+
+
+
+        private void SetupMockEmptyCache()
+        {
+            // No data in cache;
+            byte[] byteArray = null;
+
+            _mockCache.Setup(ce => ce.GetAsync(It.IsAny<string>(), default))
+                      .Returns(Task.FromResult(byteArray));
+        }
+
+        private void SetupPokemonDataCache()
+        {
+            var pokemonByteArray = CacheHelper.ToByteArray(
+                new PokemonModel()
+                {
+                    Name = "testPokemon",
+                    Habitat = "testHabitat",
+                    Description = "testDescription",
+                    IsLegendary = true                    
+                });
+
+            _mockCache.Setup(ce => ce.GetAsync(It.IsAny<string>(), default))
+                      .Returns(Task.FromResult(pokemonByteArray));
         }
     }
 }

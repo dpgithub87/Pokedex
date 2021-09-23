@@ -16,6 +16,11 @@ namespace Pokedex.Services
     {
         private HttpClient _httpClient { get; }
         private ILogger<FunTranslationsService> _loggerFunTranslationsService;
+
+        public FunTranslationsService()
+        {
+
+        }
         public FunTranslationsService(HttpClient client, ILogger<FunTranslationsService> loggerFunTranslationsService)
         {
             _httpClient = client;

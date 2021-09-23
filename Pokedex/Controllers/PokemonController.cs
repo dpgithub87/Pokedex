@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Pokedex.Models;
 using Pokedex.Services;
+using Pokedex.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,8 @@ namespace Pokedex.Controllers
 
         private readonly IDistributedCache _cache;
 
-        private PokemonService _pokemonService;
-        public PokemonController(ILogger<PokemonController> logger, IDistributedCache cache, PokemonService pokemonService)
+        private IPokemonService _pokemonService;
+        public PokemonController(ILogger<PokemonController> logger, IDistributedCache cache, IPokemonService pokemonService)
         {
             _logger = logger;
             _cache = cache;

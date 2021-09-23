@@ -1,4 +1,5 @@
 ﻿using PokeApiNet;
+using Pokedex.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Pokedex.Services
     /// Wrapper class that fetches Pokemon details from PokeAPI via PokeAPINet Nuget package
     /// Client Cache enabled by default
     /// </summary>
-    public class PokeApiNetService
+    public class PokeApiNetService : IPokeApiNetService
     {
         private PokeApiClient _pokeApiClient;
 

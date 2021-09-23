@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using PokeApiNet;
 using Pokedex.Models;
+using Pokedex.Services.Interface;
+using Pokedex.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +13,22 @@ using System.Threading.Tasks;
 
 namespace Pokedex.Services
 {
-    public class PokemonService
+    public class PokemonService : IPokemonService
     {
-        private PokeApiNetService _pokeApiNetService;
+        private IPokeApiNetService _pokeApiNetService;
         private FunTranslationsService _funTranslationService;
         private ILogger<PokemonService> _loggerPokemonService;
+        private IDistributedCache _cache;
         public PokemonService()
         {
 
         }
-        public PokemonService(PokeApiNetService pokeApiNetService,FunTranslationsService funTranslationService, ILogger<PokemonService> loggerPokemonService)
+        public PokemonService(IPokeApiNetService pokeApiNetService, FunTranslationsService funTranslationService, ILogger<PokemonService> loggerPokemonService, IDistributedCache cache)
         {
             _pokeApiNetService = pokeApiNetService;
             _funTranslationService = funTranslationService;
             _loggerPokemonService = loggerPokemonService;
+            _cache = cache;
         }
 
         public virtual async Task<IEnumerable<string>> GetPokemonNames()
@@ -33,20 +38,40 @@ namespace Pokedex.Services
         }
 
         public virtual async Task<PokemonModel> GetPokemonDetails(string pokemonName)
-        {           
+        {
             try
             {
                 PokemonModel resultPokemon = new PokemonModel();
-                         
-                var pokemonSpecies = await _pokeApiNetService.GetPokemonSpecies(pokemonName);
 
-                resultPokemon.Name = pokemonSpecies.Name;
-                resultPokemon.Habitat = pokemonSpecies.Habitat?.Name;
-                resultPokemon.IsLegendary = pokemonSpecies.IsLegendary;
+                // Check if Pokemon exists in the cache
+                var cachePokemon = await _cache.GetAsync(pokemonName);
+                if (cachePokemon != null)
+                {
+                    // Fetch from Cache
+                    resultPokemon = CacheHelper.FromByteArray<PokemonModel>(cachePokemon);
+                }
+                else
+                {
+                    // Fetch from API
+                    var pokemonSpecies = await _pokeApiNetService.GetPokemonSpecies(pokemonName);
 
-                // Get the clean description as well as the raw description
-                resultPokemon = GetPokemonDescription(pokemonSpecies, resultPokemon);
+                    resultPokemon.Name = pokemonSpecies.Name;
+                    resultPokemon.Habitat = pokemonSpecies.Habitat?.Name;
+                    resultPokemon.IsLegendary = pokemonSpecies.IsLegendary;
 
+                    // Get the clean description as well as the raw description
+                    resultPokemon = GetPokemonDescription(pokemonSpecies, resultPokemon);
+
+                    // Insert into Cache with an hour sliding expiry
+                    await _cache.SetAsync(
+                        pokemonName,
+                        CacheHelper.ToByteArray<PokemonModel>(resultPokemon),
+                        new DistributedCacheEntryOptions
+                        {
+                            SlidingExpiration = TimeSpan.FromHours(1)
+                        }
+                        );
+                }
                 return resultPokemon;
             }
             catch (Exception ex)
@@ -57,6 +82,7 @@ namespace Pokedex.Services
 
         public virtual PokemonModel GetPokemonDescription(PokemonSpecies pokemonSpecies, PokemonModel pokemonModel)
         {
+            // Fetch any of the English descriptions.
             string description = pokemonSpecies.FlavorTextEntries?.FirstOrDefault(te => te.Language.Name == "en")?.FlavorText;
 
             if (!String.IsNullOrEmpty(description))
@@ -64,6 +90,8 @@ namespace Pokedex.Services
                 pokemonModel.RawDescription = description;
 
                 pokemonModel.Description = Regex.Replace(description, @"\t|\n|\r|\f", " ");
+
+                pokemonModel.Comments = "Standard description";
             }
 
             return pokemonModel;
@@ -71,25 +99,48 @@ namespace Pokedex.Services
 
         public virtual async Task<PokemonModel> GetPokemonWithTranslations(string pokemonName)
         {
-            var pokemonModel = await GetPokemonDetails(pokemonName);            
-           
-            if (pokemonModel.Habitat == "cave" || pokemonModel.IsLegendary)
+            PokemonModel pokemonModel;
+            // Check if Pokemon (Translated version) exists in the cache
+            var cachePokemon = await _cache.GetAsync($"{pokemonName}T");
+            if (cachePokemon != null)
             {
-                var translatedResponse = await _funTranslationService.TranslateWithYoda(pokemonModel.Description);
-                if(translatedResponse is null)
-                { 
-                    return pokemonModel; 
-                }
-                pokemonModel.Description = translatedResponse.contents.translated;
+                // Fetch from Cache
+                pokemonModel = CacheHelper.FromByteArray<PokemonModel>(cachePokemon);
             }
             else
             {
-                var translatedResponse = await _funTranslationService.TranslateWithShakespeare(pokemonModel.Description);
-                if (translatedResponse is null)
+                pokemonModel = await GetPokemonDetails(pokemonName);
+
+                if (pokemonModel.Habitat == "cave" || pokemonModel.IsLegendary)
                 {
-                    return pokemonModel;
+                    var translatedResponse = await _funTranslationService.TranslateWithYoda(pokemonModel.Description);
+                    if (translatedResponse is null)
+                    {
+                        return pokemonModel;
+                    }
+                    pokemonModel.Description = translatedResponse.contents.translated;
+                    pokemonModel.Comments = "Yoda translated description";
                 }
-                pokemonModel.Description = translatedResponse.contents.translated;
+                else
+                {
+                    var translatedResponse = await _funTranslationService.TranslateWithShakespeare(pokemonModel.Description);
+                    if (translatedResponse is null)
+                    {
+                        return pokemonModel;
+                    }
+                    pokemonModel.Description = translatedResponse.contents.translated;
+                    pokemonModel.Comments = "Shakespeare translated description";
+                }
+
+                // Insert into Cache with an hour sliding expiry
+                await _cache.SetAsync(
+                    $"{pokemonName}T",
+                    CacheHelper.ToByteArray<PokemonModel>(pokemonModel),
+                    new DistributedCacheEntryOptions
+                    {
+                        SlidingExpiration = TimeSpan.FromHours(1)
+                    }
+                    );
             }
             return pokemonModel;
         }
