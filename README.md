@@ -1,7 +1,7 @@
 # Pokedex
 A Pokemon API written using C# that fetches Pokemon list from public API (https://pokeapi.co/) and does few translations based on a couple of Shakespeare / Yoda APIs (https://funtranslations.com). 
 
-Endpoints are available currently:
+Endpoints available currently:
 1. GET-  https://localhost:5001/swagger/
 To get the latest OpenApi swagger.json file for the WebApi.Project 
 
@@ -107,7 +107,7 @@ To use Microservices architecture, Each of the integration touchpoints can be mo
 - Implement token-based authentication / authorisation mechanism
 
 - Any additional microservices based on the complexity of the functionality (not required in this challenge)
-- Need to have proper Database design for Microservices that needs that
+- Need to have proper Database design for Microservices which requires database.
 - Add model validations wherever needed
 
 
