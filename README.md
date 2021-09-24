@@ -8,7 +8,7 @@ To get the latest OpenApi swagger.json file for the WebApi.Project
 2. GET-  https://localhost:5001/pokemon/{pokemonName}/
 To fetch pokemon details from Pokeapi (species) and return along with "standard" description.
 
-3.GET - https://localhost:5001/pokemon/
+3. GET - https://localhost:5001/pokemon/
 To fetch the list of Pokemon names, in case you don't know how a pokemon should be typed
 Caching the Pokemon data would be key given the static nature of the same, Currently 
 
