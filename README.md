@@ -98,6 +98,8 @@ To use Microservices architecture, Each of the integration touchpoints can be mo
 
 ### Cache
 - Implement any distributed cache (such as Redis) to cache the upstream API responses
+- Have to limit the maximum number of Pokemons based on the intended consumption of the API. Alternatively, you can go for higher subscription in any paas model cloud cache.
+
 ### Deployment & Observability
 - Deploy it in any of the Kubernetes services such as AKS or EKS or private hosted Kubernetes
 - Deploy any log collection agent such as Datadog
