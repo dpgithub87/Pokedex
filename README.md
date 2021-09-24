@@ -38,12 +38,11 @@ You can download it as .zip and extractit in a directory
 >https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
 
 ### 2. To run in Developer Powershell
-Navigate to "Pokedex" inside the cloned folder
+Navigate to the root folder and execute the below commands
 ```sh
-cd Pokdex
 dotnet build
+cd Pokdex
 dotnet run
-
 ```
 The application will be available at https://localhost:5001/
 
@@ -60,6 +59,10 @@ https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
 ## Test
 The test projects include unit tests and integration tests. Integration tests will query the PokeApi server for data via the PokeApiNet Nuget package and Shakespeare & Yoda APIs.
 The unit tests run off of mocked data.
+Execute the below "test" command in root folder.
+```sh
+dotnet test
+```
 
 ### Httpie test
 Endpoint 1:
