@@ -31,12 +31,21 @@ namespace Pokedex.Services
             _cache = cache;
         }
 
+        /// <summary>
+        ///  Gets the list of Pokemon names from PokeAPI
+        /// </summary>
+        /// <returns>Pokemon names</returns>
         public virtual async Task<IEnumerable<string>> GetPokemonNames()
         {
             var resultLst = await _pokeApiNetService.GetPokemonList();
             return resultLst.Select(pmn => pmn.Name);
         }
 
+        /// <summary>
+        /// Get the basic pokemon details from PokeAPI given a name of Pokemon
+        /// </summary>
+        /// <param name="pokemonName"></param>
+        /// <returns></returns>
         public virtual async Task<PokemonModel> GetPokemonDetails(string pokemonName)
         {
             try
@@ -80,6 +89,12 @@ namespace Pokedex.Services
             }
         }
 
+        /// <summary>
+        /// Gets both raw description & clean description from PokemonSpecies object.
+        /// </summary>
+        /// <param name="pokemonSpecies"></param>
+        /// <param name="pokemonModel"></param>
+        /// <returns>Pokemodel onject filled with description</returns>
         public virtual PokemonModel GetPokemonDescription(PokemonSpecies pokemonSpecies, PokemonModel pokemonModel)
         {
             // Fetch any of the English descriptions.
@@ -97,6 +112,11 @@ namespace Pokedex.Services
             return pokemonModel;
         }
 
+        /// <summary>
+        /// Gets the pokemon details with translations either with Yoda or Shakespeare API based on few conditions
+        /// </summary>
+        /// <param name="pokemonName"></param>
+        /// <returns>PokemonModel object filled with either translated description or standard description</returns>
         public virtual async Task<PokemonModel> GetPokemonWithTranslations(string pokemonName)
         {
             PokemonModel pokemonModel;
@@ -111,24 +131,24 @@ namespace Pokedex.Services
             {
                 pokemonModel = await GetPokemonDetails(pokemonName);
 
-                if (pokemonModel.Habitat == "cave" || pokemonModel.IsLegendary)
+                if (pokemonModel.Habitat == "cave" || pokemonModel.IsLegendary) // Condition for Yoda translation
                 {
                     var translatedResponse = await _funTranslationService.TranslateWithYoda(pokemonModel.Description);
                     if (translatedResponse is null)
                     {
-                        return pokemonModel; // Standard description
+                        return pokemonModel; // Standard description if not able to translate
                     }
 
                     //Translated description
                     pokemonModel.Description = translatedResponse.contents.translated;
                     pokemonModel.Comments = "Yoda translated description";
                 }
-                else
+                else  // Shakespeare translation
                 {
                     var translatedResponse = await _funTranslationService.TranslateWithShakespeare(pokemonModel.Description);
                     if (translatedResponse is null)
                     {
-                        return pokemonModel; // Standard description
+                        return pokemonModel; // Standard description if not able to translate
                     }
 
                     //Translated description

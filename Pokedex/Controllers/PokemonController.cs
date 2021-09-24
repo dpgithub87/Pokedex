@@ -81,7 +81,7 @@ namespace Pokedex.Controllers
         /// <returns>Pokemon details with Yoda/Shakespeare Translations</returns>
         //[HttpGet("{pokemonTranslation:string}")]
         [HttpGet]
-        [Route("translate/{pokemonName}")]
+        [Route("translated/{pokemonName}")]
         public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslations(string pokemonName)
         {
             try
