@@ -1,5 +1,20 @@
 # Pokedex
-A Pokemon API written using C# that fetches Pokemon list from public API (https://pokeapi.co/) and does few translations based on a couple of Shakespeare / Yoda APIs (https://funtranslations.com).
+A Pokemon API written using C# that fetches Pokemon list from public API (https://pokeapi.co/) and does few translations based on a couple of Shakespeare / Yoda APIs (https://funtranslations.com). 
+Five Endpoints are available currently:
+1. GET-  http://localhost:5000/swagger/
+To get the latest OpenApi swagger.json file for the WebApi.Project 
+
+2. GET-  http://localhost:5000/pokemon/{pokemonName}/
+To fetch pokemon details from Pokeapi (species) and return along with "standard" description.
+
+3.GET - http://localhost:5000/pokemon/
+To fetch the list of Pokemon names, in case you don't know how a pokemon should be typed
+Caching the Pokemon data would be key given the static nature of the same, Currently 
+
+4. GET - http://localhost:5000/pokemon/translated/{pokemonName}
+To fetch pokemon details from Pokeapi (species) and return along with translated description either Yoda in case of "cave" Habitat & "Legendary" pokemon or Sakespeare translation. To return Standard description if we encounter any issues in above said translations.
+
+Caching the Pokemon data would be key given the static nature of the data, Currently code implemented for Azure Redis cache and Distributed memory cache to run the application in local environments. This is also important as there are restrictions in the number of API calls made in both the integration endpoints.
 
 ## Prerequisites:
 - Visual Studio Community 2019 with "Asp.NET and web development" workload
