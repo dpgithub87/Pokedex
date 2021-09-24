@@ -42,12 +42,11 @@ https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
 Navigate to the root folder and execute the below commands
 ```sh
 dotnet build
-cd Pokdex
+cd Pokedex
 dotnet run
 ```
-The application will be available at http://localhost:5001/
+The application will be available at http://localhost:5000/
 
-Here is the swagger url: https://localhost:5001/swagger/index.html
 
 ### 3. To run in docker:
 - In Visual Studio 2019, please select Pokedex.Api as the startup project and please select the "docker" option and click F5, the application should be up and running in one of the available ports.
@@ -63,6 +62,7 @@ docker run -dp 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
 ```
 Note:
 For first time run, this will take time as it downloads base aspnet 5.0 image as well as the SDK 5.0 image, Subsequent runs will be faster as it uses the cached images unless there are any modifications.
+The "docker run" command connects localhost system port 5000 to docker container port 80
 
 ### 4. Git commit history added in the repo as requested - gitlog.txt
 https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
@@ -78,10 +78,10 @@ dotnet test
 ### Httpie test
 Endpoint 1:
 ```sh
-PS C:\Users\HP Laptop\source\repos\Pokedex\Pokedex\pokedex> http --verify=no https://localhost:5001/pokemon/mewtwo
+C:\Users\HP Laptop>http http://localhost:5000/pokemon/mewtwo/
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Date: Fri, 24 Sep 2021 14:54:55 GMT
+Date: Fri, 24 Sep 2021 23:30:43 GMT
 Server: Kestrel
 Transfer-Encoding: chunked
 
@@ -96,10 +96,10 @@ Transfer-Encoding: chunked
 ```
 Endpoint 2:
 ```sh
-PS C:\Users\HP Laptop\source\repos\Pokedex\Pokedex\pokedex> http --verify=no https://localhost:5001/pokemon/translated/mewtwo
+C:\Users\HP Laptop>http http://localhost:5000/pokemon/translated/mewtwo/
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Date: Fri, 24 Sep 2021 14:59:18 GMT
+Date: Fri, 24 Sep 2021 23:30:54 GMT
 Server: Kestrel
 Transfer-Encoding: chunked
 
