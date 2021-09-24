@@ -3,7 +3,7 @@ A Pokemon API written using C# that fetches Pokemon list from public API (https:
 
 Endpoints available currently:
 1. GET-  https://localhost:5001/swagger/
-To get the latest OpenApi swagger.json file for the WebApi.Project 
+To get the latest OpenApi swagger.json file for the Pokedex.Api - WebApi.Project 
 
 2. GET-  https://localhost:5001/pokemon/{pokemonName}/
 To fetch pokemon details from Pokeapi (species) and return along with "standard" description.
