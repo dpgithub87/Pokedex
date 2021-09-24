@@ -35,6 +35,9 @@ In Visual studio 2019, please select Pokedex.Api as start up project and please 
 You can use the PodedexApi/Dockerfile in any build pipelines to build image that can be published to any cloud container registry, then deployed to kubernetes cluster by Release pipelines.
 Sample Tech stack: Azure devops build pipeline, Release pipeline, Azure Container Registry & AKS
 
+### 4. Git commit history added in the repo as requested - gitlog.txt
+https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
+
 ## Test
 The test projects includes unit tests and integration tests. Integration tests will query the PokeApi server for data via PokeApiNet Nuget package and Shakespeare & Yoda APIs.
 The unit tests run off of mocked data.
