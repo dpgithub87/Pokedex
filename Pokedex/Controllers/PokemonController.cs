@@ -82,7 +82,7 @@ namespace Pokedex.Controllers
         //[HttpGet("{pokemonTranslation:string}")]
         [HttpGet]
         [Route("translate/{pokemonName}")]
-        public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslation(string pokemonName)
+        public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslations(string pokemonName)
         {
             try
             {

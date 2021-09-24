@@ -35,7 +35,7 @@ namespace Pokedex.Services
                 toTranslate = Regex.Replace(toTranslate, @"\t|\n|\r|\f", " ");
 
                 toTranslate = HttpUtility.UrlEncode(toTranslate);
-                             
+
                 return await _httpClient.GetFromJsonAsync<FunTranslation>(
                               $"shakespeare.json?text=" + $"{toTranslate}");
             }
