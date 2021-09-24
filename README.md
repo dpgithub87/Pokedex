@@ -32,10 +32,11 @@ Caching the Pokemon data would be key given the static nature of the data, Curre
 ### 1. You can download as Zip or clone this repo using git
 
 Using git:
-> git clone https://github.com/dpgithub87/Pokedex
-
-You can download it as .zip and extractit in a directory
->https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
+```sh
+git clone https://github.com/dpgithub87/Pokedex
+```
+Zip link:
+https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
 
 ### 2. To run in Developer Powershell
 Navigate to the root folder and execute the below commands
