@@ -58,7 +58,7 @@ https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
 
 ## Test
 The test projects include unit tests and integration tests. Integration tests will query the PokeApi server for data via the PokeApiNet Nuget package and Shakespeare & Yoda APIs.
-The unit tests run off of mocked data.
+The unit tests run with mocked data.
 Execute the below "test" command in root folder.
 ```sh
 dotnet test
