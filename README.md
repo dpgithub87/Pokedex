@@ -45,7 +45,7 @@ dotnet build
 cd Pokdex
 dotnet run
 ```
-The application will be available at https://localhost:5001/
+The application will be available at http://localhost:5001/
 
 Here is the swagger url: https://localhost:5001/swagger/index.html
 
@@ -70,7 +70,7 @@ https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
 ## Test
 The test projects include unit tests and integration tests. Integration tests will query the PokeApi server for data via the PokeApiNet Nuget package and Shakespeare & Yoda APIs.
 The unit tests run with mocked data.
-Execute the below "test" command in root folder.
+Execute the below "test" command by navigating to root folder in CLI.
 ```sh
 dotnet test
 ```
@@ -124,10 +124,6 @@ To use Microservices architecture, Each of the integration touchpoints can be mo
 - Need to have proper Database design for Microservices which requires database.
 - Add model validations wherever needed
 
-## Docker Image creation via pipelines
-You can use the PodedexApi/Dockerfile in any build pipelines to build images that can be published to any cloud container registry, then deployed to the Kubernetes cluster by Release pipelines.
-Sample Tech stack: Azure DevOps build pipeline, Release pipeline, Azure Container Registry & AKS
-
 ### Integration
 - Message Queuing systems such as Azure Service Bus used for communication between microservices
 - gPRC could be used as an alternative communication mechanism between microservices
@@ -135,6 +131,10 @@ Sample Tech stack: Azure DevOps build pipeline, Release pipeline, Azure Containe
 ### Cache
 - Implement any distributed cache (such as Redis) to cache the upstream API responses
 - Have to limit the maximum number of Pokemons based on the intended consumption of the API. Alternatively, you can go for higher subscription in any paas model cloud cache.
+
+### Docker Image creation via pipelines
+You can use the PodedexApi/Dockerfile in any build pipelines to build images that can be published to any cloud container registry, then deployed to the Kubernetes cluster by Release pipelines.
+Sample Tech stack: Azure DevOps build pipeline, Release pipeline, Azure Container Registry & AKS
 
 ### Deployment & Observability
 - Deploy it in any of the Kubernetes services such as AKS or EKS or private hosted Kubernetes

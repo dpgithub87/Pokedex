@@ -77,10 +77,10 @@ namespace Pokedex
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pokedex v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pokedex v1"));               
             }
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection(); Need to install certificates in order to expose it in docker (not needed for development environments)
 
             app.UseRouting();
 
