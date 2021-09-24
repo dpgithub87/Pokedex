@@ -38,7 +38,7 @@ git clone https://github.com/dpgithub87/Pokedex
 Zip link:
 https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
 
-### 2. To run in Developer Powershell
+### 2. To run in Developer Powershell VS 2019 or any console command prompt
 Navigate to the root folder and execute the below commands
 ```sh
 dotnet build
