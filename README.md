@@ -63,7 +63,7 @@ docker run -dp 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
 
 -f : file
 
--d : Run container in background and print container ID
+-d : detach, Run container in background and print container ID
 
 -p : port
 
@@ -139,7 +139,7 @@ To use Microservices architecture, Each of the integration touchpoints can be mo
 
 ### Cache
 - Implement any distributed cache (such as Redis) to cache the upstream API responses
-- Have to limit the maximum number of Pokemons based on the intended consumption of the API. Alternatively, you can go for higher subscription in any paas model cloud cache.
+- Have to limit the maximum number of Pokemons based on the intended consumption of the API. Alternatively, you can go for higher subscription in any PAAS model cloud cache.
 
 ### Docker Image creation via pipelines
 You can use the PodedexApi/Dockerfile in any build pipelines to build images that can be published to any cloud container registry, then deployed to the Kubernetes cluster by Release pipelines.
