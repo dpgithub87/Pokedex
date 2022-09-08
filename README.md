@@ -13,7 +13,7 @@ To fetch pokemon details from Pokeapi (species) and return along with "standard"
 To fetch the list of Pokemon names, in case you don't know how a pokemon should be typed.
 
 4. GET - http://localhost:5000/pokemon/translated/{pokemonName}
-To fetch pokemon details from Pokeapi (species) and return along with translated description either Yoda in case of "cave" Habitat & "Legendary" pokemon or Sakespeare translation. To return Standard description if we encounter any issues in above said translations.
+To fetch pokemon details from Pokeapi (species) and return along with translated description either **Yoda** in case of {"cave" Habitat & "Legendary" pokemon} or **Shakespeare** translation. To return Standard description if we encounter any issues in above mentioned translations.
 
 5. GET - http://localhost:5000/health
 To check if the API is healthy - Provided by Microsoft Extensions Disagnostics Health Checks
