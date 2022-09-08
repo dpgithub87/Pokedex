@@ -60,8 +60,11 @@ docker build -t pokedex:v1 -f .\Pokedex\Dockerfile .
 docker run -dp 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
 ```
 -t : tag
+
 -f : file
+
 -d : Run container in background and print container ID
+
 -p : port
 
 Note:
