@@ -10,8 +10,7 @@ To get the latest OpenApi swagger.json file for the Pokedex.Api - WebApi.Project
 To fetch pokemon details from Pokeapi (species) and return along with "standard" description.
 
 3. GET - http://localhost:5000/pokemon/
-To fetch the list of Pokemon names, in case you don't know how a pokemon should be typed
-Caching the Pokemon data would be key given the static nature of the same, Currently 
+To fetch the list of Pokemon names, in case you don't know how a pokemon should be typed.
 
 4. GET - http://localhost:5000/pokemon/translated/{pokemonName}
 To fetch pokemon details from Pokeapi (species) and return along with translated description either Yoda in case of "cave" Habitat & "Legendary" pokemon or Sakespeare translation. To return Standard description if we encounter any issues in above said translations.
