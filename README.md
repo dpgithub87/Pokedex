@@ -54,7 +54,7 @@ The application will be available at http://localhost:5000/
 docker build -t pokedex:v1 -f .\Pokedex\Dockerfile .
 docker run -it --rm -p 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
 ```
-- If you want to run docker in a disconnected fashion, please use the below command. Please note, you need to execute build command only once.
+- If you want to run docker in a disconnected fashion, please use the below command. Please note, you don't need to build if you had already built the image.
 ```sh
 docker build -t pokedex:v1 -f .\Pokedex\Dockerfile .
 docker run -dp 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
