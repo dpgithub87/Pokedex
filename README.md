@@ -125,7 +125,7 @@ To use Microservices architecture, Each of the integration touchpoints can be mo
 
 ### Integration
 - Message Queuing systems such as Azure Service Bus used for communication between microservices
-- gPRC could be used as an alternative communication mechanism between microservices
+- gRPC could be used as an alternative communication mechanism between microservices
 
 ### Cache
 - Implement any distributed cache (such as Redis) to cache the upstream API responses
@@ -139,6 +139,6 @@ Sample Tech stack: Azure DevOps build pipeline, Release pipeline, Azure Containe
 - Deploy it in any of the Kubernetes services such as AKS or EKS or private hosted Kubernetes
 - Deploy any log collection agent such as Datadog
 - Reports to show the health of the PODs, Services and the Cluster
-- Any Alerting mechanism if threshold limits reach on the usage of the PODS / Cluster
+- Any Alerting mechanism if threshold limits reach on the usage of the Pods / Cluster
 
 
