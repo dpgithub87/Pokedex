@@ -59,6 +59,11 @@ docker run -it --rm -p 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v
 docker build -t pokedex:v1 -f .\Pokedex\Dockerfile .
 docker run -dp 5000:80 -e "ASPNETCORE_ENVIRONMENT=Development" pokedex:v1
 ```
+-t : tag
+-f : file
+-d : Run container in background and print container ID
+-p : port
+
 Note:
 For first time run, this will take time as it downloads base aspnet 5.0 image as well as the SDK 5.0 image, Subsequent runs will be faster as it uses the cached images unless there are any modifications.
 The "docker run" command connects localhost system port 5000 to docker container port 80
