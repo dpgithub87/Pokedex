@@ -131,31 +131,28 @@ namespace Pokedex.Services
             {
                 pokemonModel = await GetPokemonDetails(pokemonName);
 
-                if (pokemonModel.Habitat == "cave" || pokemonModel.IsLegendary) // Condition for Yoda translation
+                List<IFunTranslationsStrategyService> funs =
                 {
-                    var translatedResponse = await _funTranslationService.TranslateWithYoda(pokemonModel.Description);
-                    if (translatedResponse is null)
-                    {
-                        return pokemonModel; // Standard description if not able to translate
-                    }
-
-                    //Translated description
-                    pokemonModel.Description = translatedResponse.contents.translated;
-                    pokemonModel.Comments = "Yoda translated description";
+                    new ShakespeareFunTranslationsStrategyService(),
+                    new YodaFunTranslationsStrategyService()
+                };
+                foreach(IFunTranslationsStrategyService fun in funs)
+                {
+                    _funTranslationService = fun.isResolved(pokemonModel);
+                    if _funTranslationService != null
+                        break;
                 }
-                else  // Shakespeare translation
+                    
+                var translatedResponse = await _funTranslationService.MakeFunTranslation(pokemonModel.Description);
+                if (translatedResponse is null)
                 {
-                    var translatedResponse = await _funTranslationService.TranslateWithShakespeare(pokemonModel.Description);
-                    if (translatedResponse is null)
-                    {
-                        return pokemonModel; // Standard description if not able to translate
-                    }
-
-                    //Translated description
-                    pokemonModel.Description = translatedResponse.contents.translated;
-                    pokemonModel.Comments = "Shakespeare translated description";
+                    return pokemonModel; // Standard description if not able to translate
                 }
 
+                //Translated description
+                pokemonModel.Description = translatedResponse.contents.translated;
+                pokemonModel.Comments = _funTranslationService.FunType() + " translated description";
+                
                 // Insert into Cache with an hour sliding expiry
                 await _cache.SetAsync(
                     $"{pokemonName}T",
