@@ -36,6 +36,7 @@ git clone https://github.com/dpgithub87/Pokedex
 ```
 Zip link:
 https://github.com/dpgithub87/Pokedex/archive/refs/heads/main.zip
+{https://github.com/yourusername/yourrepository/archive/refs/heads/branchname.zip}
 
 ### 2. To run in Developer Powershell VS 2019 or any console command prompt
 Navigate to the root folder and execute the below commands
