@@ -74,6 +74,11 @@ Note:
 For first time run, this will take time as it downloads base aspnet 5.0 image as well as the SDK 5.0 image, Subsequent runs will be faster as it uses the cached images unless there are any modifications.
 The "docker run" command connects localhost system port 5000 to docker container port 80
 
+To Exec into a docker container
+```sh
+ docker exec -it {name-of-the-container-from-docker-run} /bin/bash
+```
+
 ### 4. Git commit history added in the repo as requested - gitlog.txt
 https://github.com/dpgithub87/Pokedex/blob/main/gitlog.txt
 
