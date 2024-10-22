@@ -12,88 +12,41 @@ using System.Threading.Tasks;
 namespace Pokedex.Controllers
 {
     [ApiController]
-    [Route("pokemon")]
+    
     public class PokemonController : ControllerBase
     {
 
-        private readonly ILogger<PokemonController> _logger;
-
-        private readonly IDistributedCache _cache;
-
-        private IPokemonService _pokemonService;
-        public PokemonController(ILogger<PokemonController> logger, IDistributedCache cache, IPokemonService pokemonService)
+        private readonly IPokemonService _pokemonService;
+        private readonly IFunTranslationsService _funTranslationsService;
+        private readonly IFunTranslationImplInterface _funTranslationsImpl;
+        public PokemonController(IPokemonService pokemonService, IFunTranslationsService funTranslationsService, IFunTranslationImplInterface funTranslationImplInterface)
         {
-            _logger = logger;
-            _cache = cache;
             _pokemonService = pokemonService;
+            _funTranslationsService = funTranslationsService;
+            _funTranslationsImpl = funTranslationImplInterface;
+        }
+        [Route("/getpokemonName")]
+        [HttpGet]
+        public async Task<IActionResult> GetPokemonNames()
+        {
+            var pokemonNames = await _pokemonService.GetPokemonNames();
+            return Ok(pokemonNames);
+        }  
+
+        [Route("/getPokemonDetails")]
+        [HttpGet()]
+        public async Task<IActionResult> getpokemonDetail([FromHeader] string pokemonName)
+        {
+            var pokemonDetails = await _pokemonService.GetPokemonDetails(pokemonName);
+            
+            return Ok(pokemonDetails);
         }
 
-        /// <summary>
-        /// Gets the list of Pokemon names from PokeApi service
-        /// </summary>
-        /// <returns>List of Pokemon names</returns>
-        [HttpGet]
-        public Task<IEnumerable<string>> Get()
+        [Route("/Translate")]
+        [HttpGet()]
+        public async Task<IActionResult> funTranslation([FromHeader] string pokemonName)
         {
-            try
-            {
-                _logger.LogInformation("Request received for GetPokemonNames");
-
-                var result = _pokemonService.GetPokemonNames();
-
-                _logger.LogInformation("Succesfully executed GetPokemonNames");
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Exception occured when fetching Pokemon Names, Error Message: ", ex.Message, ex.InnerException.Message);
-
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Gets the Pokemon Details for a given pokemon name
-        /// </summary>
-        /// <param name="pokemonName"></param>
-        /// <returns>Pokemon details</returns>
-        [HttpGet]
-        [Route("{pokemonName}")]
-        public async Task<ActionResult<PokemonModel>> GetPokemon(string pokemonName)
-        {
-            try
-            {
-                return await _pokemonService.GetPokemonDetails(pokemonName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Excpetion occurred when fetching Pokemon details, Error Message: ", ex.Message, ex.InnerException);
-
-                return NotFound();
-            }
-        }
-
-        /// <summary>
-        /// Gets the Pokemon Details for a given pokemon name with Translations
-        /// </summary>
-        /// <param name="pokemonName"></param>
-        /// <returns>Pokemon details with Yoda/Shakespeare Translations</returns>
-        //[HttpGet("{pokemonTranslation:string}")]
-        [HttpGet]
-        [Route("translated/{pokemonName}")]
-        public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslations(string pokemonName)
-        {
-            try
-            {
-                return await _pokemonService.GetPokemonWithTranslations(pokemonName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Excpetion occurred when fetching GetPokemonWithTranslations, Error Message: ", ex.Message, ex.InnerException);
-
-                return NotFound();
-            }
+            return Ok(await _funTranslationsImpl.funTranslationImpl(pokemonName));
         }
 
     }

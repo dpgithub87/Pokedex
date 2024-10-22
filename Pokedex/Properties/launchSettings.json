@@ -17,15 +17,29 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Pokedex": {
+    "DevPokedex": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
       "applicationUrl": "http://localhost:5000"
+    },
+    "QaPokedex": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "QA"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:5001"
+    },
+    "ProdPokedex": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Prod"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:5002"
     },
     "Docker": {
       "commandName": "Docker",

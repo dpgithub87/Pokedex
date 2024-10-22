@@ -1,68 +1,29 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Pokedex.Models;
-using Pokedex.Services.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.Extensions.Logging;
+using Pokedex.Models;
+using Pokedex.Services.Interface;
 
 namespace Pokedex.Services
 {
     public class FunTranslationsService : IFunTranslationsService
     {
-        private HttpClient _httpClient { get; }
-        private ILogger<FunTranslationsService> _loggerFunTranslationsService;
+        private readonly HttpClient _httpClient;
+        private readonly ITranslationStrategyResolver _strategyResolver;
 
-        public FunTranslationsService()
-        {
-
-        }
-        public FunTranslationsService(HttpClient client, ILogger<FunTranslationsService> loggerFunTranslationsService)
+        public FunTranslationsService(HttpClient client, ITranslationStrategyResolver strategyResolver)
         {
             _httpClient = client;
-            _loggerFunTranslationsService = loggerFunTranslationsService;
+            _strategyResolver = strategyResolver;
         }
 
-        public virtual async Task<FunTranslation> TranslateWithShakespeare(string toTranslate)
+        public async Task<FunTranslation> Translate(string toTranslate, string strategyType)
         {
-            try
-            {
-                toTranslate = Regex.Replace(toTranslate, @"\t|\n|\r|\f", " ");
-
-                toTranslate = HttpUtility.UrlEncode(toTranslate);
-
-                return await _httpClient.GetFromJsonAsync<FunTranslation>(
-                              $"shakespeare.json?text=" + $"{toTranslate}");
-            }
-            catch(Exception ex)
-            {
-                _loggerFunTranslationsService.LogError("Exception occured on TranslateWithShakespeare, Exception Details: ", ex.Message, ex.InnerException?.Message);
-                return null;
-            }
+            var strategy = _strategyResolver.Resolve(strategyType);
+            return await strategy.Translate(toTranslate);
         }
-
-        public virtual async Task<FunTranslation> TranslateWithYoda(string toTranslate)
-        {
-            try
-            {
-                toTranslate = Regex.Replace(toTranslate, @"\t|\n|\r|\f", " ");
-
-                toTranslate = HttpUtility.UrlEncode(toTranslate);
-
-                return await _httpClient.GetFromJsonAsync<FunTranslation>(
-                              $"yoda.json?text=" + $"{toTranslate}");
-            }
-            catch (Exception ex)
-            {
-                _loggerFunTranslationsService.LogError("Exception occured on TranslateWithShakespeare, Exception Details: ", ex.Message, ex.InnerException?.Message);
-                return null;
-            }
-        }
-        
     }
 }

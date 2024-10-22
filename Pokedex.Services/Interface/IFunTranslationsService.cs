@@ -1,17 +1,15 @@
-﻿using Pokedex.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Pokedex.Models;
 
 namespace Pokedex.Services.Interface
 {
     public interface IFunTranslationsService
     {
-        public Task<FunTranslation> TranslateWithShakespeare(string toTranslate);
-
-        public Task<FunTranslation> TranslateWithYoda(string toTranslate);
-
+        Task<FunTranslation> Translate(string text, string strategyType);
+        //Task<FunTranslation> TranslateWithShakespeare(string toTranslate);
+        //Task<FunTranslation> TranslateWithYoda(string toTranslate);
     }
 }
