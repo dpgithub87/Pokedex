@@ -1,26 +1,82 @@
-using Microsoft.AspNetCore.Hosting;
+using Pokedex.Services;
+using PokeApiNet;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Pokedex.Services.Interface;
+using Pokedex.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Caching.Redis;
 
-namespace Pokedex
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers(); 
+
+IConfiguration Configuration = builder.Configuration;
+
+builder.Services.AddSingleton<IConfiguration>(Configuration);
+builder.Services.AddTransient<IPokeApiNetService, PokeApiNetService>();
+builder.Services.AddTransient<IPokemonService, PokemonService>();
+builder.Services.AddSingleton<PokeApiClient>();
+
+builder.Services.AddHttpClient<FunTranslationsService>(c=>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    c.BaseAddress = new Uri("https://api.funtranslations.com/translate/");
+    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+builder.Services.Configure<RedisCacheOptions>(options =>
+{
+    var redisConnStr = builder.Configuration.GetValue<string>("Redis:ConnectionString");
+
+    if (!string.IsNullOrEmpty(redisConnStr))
+    {
+        options.Configuration = redisConnStr;
+        options.InstanceName = "redis-pokedex";
     }
+});
+
+if (!string.IsNullOrEmpty(builder.Configuration.GetValue<string>("Redis:ConnectionString")))
+{
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration.GetValue<string>("Redis:ConnectionString");
+        options.InstanceName = "redis-pokedex";
+    });
+    Console.WriteLine("Redis Cache Initiated.");
 }
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+    Console.WriteLine("Distributed Memory Cache Initiated");
+}
+
+string redisConnStr = Configuration.GetValue<string>("Redis:ConnectionString");
+
+if (!string.IsNullOrEmpty(redisConnStr)) // Can use Azure Redis cache instance in production / test environments
+{
+    builder.Services.AddDistributedRedisCache(options =>
+    {
+        options.Configuration = redisConnStr;
+        options.InstanceName = "redis-pokedex";
+    });
+    Console.WriteLine("Redis Cache Initiated.");
+}
+else
+{
+    // For Local development environment when not using Redis
+    builder.Services.AddDistributedMemoryCache();
+    Console.WriteLine("Distributed Memory Cache Initiated");
+}
+
+
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+var app = builder.Build();
+app.UseHttpsRedirection();
+app.MapControllers();
+
+app.Run();
