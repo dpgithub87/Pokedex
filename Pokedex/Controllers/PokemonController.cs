@@ -86,7 +86,6 @@ namespace Pokedex.Controllers
         [Route("translated/{pokemonName}")]
         public async Task<IActionResult> GetPokemonWithTranslations([FromHeader] string pokemonName)
         {
-            System.Console.WriteLine("uagfy8i");
             FunTranslation translatedText = (FunTranslation)await _translationContext.Translate(pokemonName);
             return Ok(translatedText);
         }
