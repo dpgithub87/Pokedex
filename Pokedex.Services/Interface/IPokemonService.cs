@@ -9,10 +9,7 @@ namespace Pokedex.Services.Interface
 {
    public interface IPokemonService
     {
-        public Task<IEnumerable<string>> GetPokemonNames();
-
-        public Task<PokemonModel> GetPokemonDetails(string pokemonName);
-
-        public Task<PokemonModel> GetPokemonWithTranslations(string pokemonName);
+        Task<List<string>> GetPokemonNames();
+        Task<PokemonModel> GetPokemonDetails(string name);
     }
 }

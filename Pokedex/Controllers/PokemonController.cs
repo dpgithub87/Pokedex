@@ -21,11 +21,13 @@ namespace Pokedex.Controllers
         private readonly IDistributedCache _cache;
 
         private IPokemonService _pokemonService;
-        public PokemonController(ILogger<PokemonController> logger, IDistributedCache cache, IPokemonService pokemonService)
+        private TranslationContext _translationContext;
+        public PokemonController(ILogger<PokemonController> logger, IDistributedCache cache, IPokemonService pokemonService, TranslationContext funTranslation)
         {
             _logger = logger;
             _cache = cache;
             _pokemonService = pokemonService;
+            _translationContext = funTranslation;
         }
 
         /// <summary>
@@ -33,13 +35,13 @@ namespace Pokedex.Controllers
         /// </summary>
         /// <returns>List of Pokemon names</returns>
         [HttpGet]
-        public Task<IEnumerable<string>> Get()
+        public async Task<IEnumerable<string>> Get()
         {
             try
             {
                 _logger.LogInformation("Request received for GetPokemonNames");
 
-                var result = _pokemonService.GetPokemonNames();
+                var result = await _pokemonService.GetPokemonNames();
 
                 _logger.LogInformation("Succesfully executed GetPokemonNames");
 
@@ -79,22 +81,26 @@ namespace Pokedex.Controllers
         /// </summary>
         /// <param name="pokemonName"></param>
         /// <returns>Pokemon details with Yoda/Shakespeare Translations</returns>
-        //[HttpGet("{pokemonTranslation:string}")]
+        // [HttpGet("{pokemonTranslation:string}")]
         [HttpGet]
         [Route("translated/{pokemonName}")]
-        public async Task<ActionResult<PokemonModel>> GetPokemonWithTranslations(string pokemonName)
+        public async Task<IActionResult> GetPokemonWithTranslations([FromHeader] string pokemonName)
         {
-            try
-            {
-                return await _pokemonService.GetPokemonWithTranslations(pokemonName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Excpetion occurred when fetching GetPokemonWithTranslations, Error Message: ", ex.Message, ex.InnerException);
-
-                return NotFound();
-            }
+            System.Console.WriteLine("uagfy8i");
+            FunTranslation translatedText = (FunTranslation)await _translationContext.Translate(pokemonName);
+            return Ok(translatedText);
         }
+            // try
+            // {
+            //     return await _pokemonService.GetPokemonWithTranslations(pokemonName);
+            // }
+            // catch (Exception ex)
+            // {
+            //     _logger.LogError("Excpetion occurred when fetching GetPokemonWithTranslations, Error Message: ", ex.Message, ex.InnerException);
+
+            //     return NotFound();
+            // }
+        
 
     }
 }

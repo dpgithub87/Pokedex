@@ -16,15 +16,21 @@ builder.Services.AddControllers();
 IConfiguration Configuration = builder.Configuration;
 
 builder.Services.AddSingleton<IConfiguration>(Configuration);
-builder.Services.AddTransient<IPokeApiNetService, PokeApiNetService>();
 builder.Services.AddTransient<IPokemonService, PokemonService>();
 builder.Services.AddSingleton<PokeApiClient>();
 
-builder.Services.AddHttpClient<FunTranslationsService>(c=>
-{
-    c.BaseAddress = new Uri("https://api.funtranslations.com/translate/");
-    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-});
+ builder.Services.AddHttpClient<ShakespeareTranslationStrategy>();
+builder.Services.AddHttpClient<YodaTranslationStrategy>();
+
+builder.Services.AddTransient<ITranslationStrategy, YodaTranslationStrategy>();
+builder.Services.AddTransient<ITranslationStrategy, ShakespeareTranslationStrategy>();
+
+builder.Services.AddSingleton<TranslationContext>();
+// builder.Services.AddHttpClient<FunTranslationsService>(c=>
+// {
+//     c.BaseAddress = new Uri("https://api.funtranslations.com/translate/");
+//     c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+// });
 
 builder.Services.Configure<RedisCacheOptions>(options =>
 {
